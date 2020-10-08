@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,8 +9,7 @@ namespace CreateCustodianDatabase.Helpers
 {
     public static partial class Helper
     {
-        public static /* async Task<List<string>>*/
-            List<string> LoadCSVFileIntoMemory(string fileName)
+        public static async Task<List<string>> LoadCSVFileIntoMemory(string fileName)
         {
             // add exception handling to reader
             try
@@ -20,15 +20,17 @@ namespace CreateCustodianDatabase.Helpers
                     var buffer = string.Empty;
                     while ((buffer = r.ReadLine()) != null)
                     {
-                        Console.WriteLine(buffer);
+                      //  Console.WriteLine(buffer);
                         data.Add(buffer);
                     }
                     // let's log the fact that we loaded all records successfully
                     var msg = String.Format("{0} records successfully load from CSV file...", data.Count);
                     //                    Logger.Log(msg);
                 }
-                return data;
-                // return await data;
+
+                return data;              //  return await data.AsQueryable<List<string>>();
+
+
             }
             catch (Exception excp)
             {

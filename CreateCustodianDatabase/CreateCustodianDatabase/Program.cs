@@ -12,23 +12,24 @@ using System.Net;
 using Newtonsoft.Json;
 using System.Globalization;
 using System.Diagnostics;
+using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
+using System.Collections.Specialized;
 
 namespace CreateCustodianDatabase
 {
     class Program
     {
-        private static string ConnectionString
-            = "Server=tcp:uat-my-database-server.database.windows.net,1433;Database=Custodians;User ID=clabrath;Password=319@@Mayne.com;Trusted_Connection=False;Encrypt=True;MultipleActiveResultSets=True;";
         private static string InFileName =
             @"C:\Users\HT386LN\source\repos\NewRepo\CreateCustodianDatabase\CreateCustodianDatabase\us-500.csv";
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             try
             {
                 Console.WriteLine("Hello World!");
 
-                List<string> rawData = Helper.LoadCSVFileIntoMemory(InFileName);
+                List<string> rawData = await Helper.LoadCSVFileIntoMemory(InFileName);
                 List<Employee> employees = new List<Employee>();
 
                 // just for the hell of it should use of different type of loop
@@ -73,40 +74,36 @@ namespace CreateCustodianDatabase
                     }
                 }
                 while (idx < 20);
+                
+                
+                List<string> bigData = new List<string>();
 
-
-
-                // example of loop (iterating over a string collection
-                foreach (var str in rawData)
+                foreach (var t in rawData)
                 {
-                    var delim = ',';
-                    var dataElements = str.Split(delim);// this is also a sample string operation (a parser
-                                                        // fix that bug remove double quotes
+                    if (t.Contains("first_name")) continue;
+                     
+                    var data3 = t.Replace("\",\"","|");
+                    data3 = data3.Replace("\",", "|");
+                    data3 = data3.Replace(",\"","|");
+
+                    var delim = '|';
+                    var dataElements = data3.Split(delim);
+
                     var firstName = dataElements[0].Replace("\"", "");// this is sample string operation
                     var lastName = dataElements[1].Replace("\"", "");// this is sample string operation
+
+                    var address = dataElements[3].Replace("\"", ""); 
+                    var city = dataElements[4].Replace("\"", "");
+                    var state = dataElements[6].Replace("\"", "");
+                    var zipcode = dataElements[7].Replace("\"", "");
+                    var phone1 = dataElements[8].Replace("\"", "");
+                    var phone2 = dataElements[9].Replace("\"", "");
+
+                   var website = dataElements[11].Replace("\"", "");
                     var email = dataElements[10].Replace("\"", "");// this is sample string operation
-                    var companyName = dataElements[2].Replace("\"", "");// this is sample string operation
-
-                    // let's just set a bunch of employees to have an invalid email address
-                    if (companyName.Length > 20) email = email.Replace("@", "-");
-
-                    // this also demonstrates use of different constructors
-                    if (Employee.IsValidEmail(email))
-                    {
-                        // here we create an instance of an employee and add it to our collection of employees
-                        new Employee(firstName, lastName, email, companyName);// call constructor
-                   //     Console.WriteLine("first name = {0} -- last name = {1}", firstName, lastName);
-                    }
-                    else
-                    {
-                        new Employee(firstName, lastName);
-                     //   Console.WriteLine("bad email address for this employee {0}, {1}", lastName, firstName);
-                    }
+        
+                    new Employee(firstName, lastName, address, city, state, zipcode, email, website, phone1, phone2);
                 }
-
-                // add this test case to force an exception
-
-             //   new Employee(null, null, null);
 
                 // so all employee data was successfully loaded in memory
                 var employeesList = Employee.GetEmployees();
@@ -120,33 +117,82 @@ namespace CreateCustodianDatabase
             catch(Exception excp)
             {
                 Console.WriteLine("Error encountered. Error code = " + excp.Message);
-                return;
+         //      return;
             }
+
+            await DoIt();
+
+       //     await SendRecordsToAzure();
+
+        }
+
+
+        public static async Task DoIt()
+        {
+           /* var response =
+            * 
+            * */
+             await HttpClient2.Doit("https://localhost:44301/api/employee/post", new NameValueCollection()
+            {
+
+                { "firstname", "Clarence" },
+                { "lastname", "Brathwaite" }
+            });
+        }
+
+
+
+
+        ////public static class Http
+        ////{
+        ////    public static async Task<bool> Post(string url, NameValueCollection pairs)
+        ////    {
+        ////        byte[] response = null;
+
+        ////        using (var httpClient = new HttpClient())
+        ////        {
+        ////            httpClient.BaseAddress = new Uri(url);
+        ////            httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+        ////            httpClient.DefaultRequestHeaders.Add("Content-Type", "application/json");
+
+        ////            var content = new HttpContent(
+        ////          new[]
+        ////      {new KeyValuePair<string, string>("firstname", "Clarence"),
+        ////            //new KeyValuePair<string, string>("client_id", "dataImporter"),
+        ////            //new KeyValuePair<string, string>("client_secret", env!="dev" ? "PLACEHOLDER" : Constants.CLIENT_SECRET),
+        ////            //new KeyValuePair<string, string>("scope", "platformApi"),
+        ////            //new KeyValuePair<string, string>("grant_type", "password"),
+        ////            //new KeyValuePair<string, string>("username", userName),
+        ////            //new KeyValuePair<string, string>("password", password)
+        ////      }); ;
+
+
+
+        ////            var resp = await httpClient.PostAsync(url, content);
+
+        ////         //   var data = await resp.ReadAsStringAsync();
+        ////        }
+
+        ////        return true;
+        ////    }
+        ////}
+
+
             
 
-//            Helper.LoadDataIntoDatabase(Employee.GetEmployees());
-
-            //return true;
-        }
-
-        class EmployeeDTO
-        {
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
-            public string EmailAddress { get; set; }
-        }
-
-        // this is part of my TODO
-        public static void SendRecordsToAzure()
+        public async static Task SendRecordsToAzure()
         {
             //  this is the static list of Employees with valid email addresses
-            var azureEmployees = Employee.GetEmployeesWithValidEmailAddresses();
+            var azureEmployees = Employee.GetEmployees();
 
-            WebClient client = new WebClient();
-            client.BaseAddress = "";
+            //HttpClient client = new HttpClient();
+            //client.BaseAddress = new Uri("https://localhost:44301/");
             // here is another example of string manupalation converting to a json string
             // we do a POST action to upload the data to the web API
             // no need to send all the data just 50 records
+
+            var jsonList = new List<string>();
+
             foreach(var emp in azureEmployees.Take(50))
             {
                 // DTO are efficient in web development by just sending the data you need to the server
@@ -154,40 +200,47 @@ namespace CreateCustodianDatabase
                 // in the future this payload could be send all at once as a json array
                 // this implementation will make 50 calls to Middle Tier
                 // using a JSON Array reduces it to 1 call
-                var data = new EmployeeDTO
-                {
-                    FirstName = emp.FirstName,
-                    LastName = emp.LastName,
-                    EmailAddress = emp.Email
-                };
                 var json = JsonConvert.SerializeObject(emp);
+                jsonList.Add(json);
             }
-        }
-      
-        private static void CheckDatabaseConnection()
-        { 
 
-            var Conn2 = "Server=tcp:uat-my-database-server.database.windows.net,1433;Database=Custodians;User ID=clabrath;Password=319@@Mayne.com;Trusted_Connection=False;Encrypt=True;MultipleActiveResultSets=True;";
+           //// var content = new FormUrlEncodedContent(
+           ////     new[] {
 
-            var ConnectionString = "Data Source=uat-my-database-server.database.windows.net;catalog=Custodians;User Id=clabrath; password=319@@Mayne.com";
 
-            using (SqlConnection conn = new System.Data.SqlClient.SqlConnection(Conn2))
-            {
-                conn.Open();
-                using (SqlCommand cmd =  new SqlCommand("SELECT * FROM Custodians", conn))
-                {
-                    using (SqlDataReader r = cmd.ExecuteReader())
-                    {
-                        while (r.Read())
-                        {
-                            var firstName = r.GetString(1);
-                            var lastName = r.GetString(2);
+           ////         new KeyValuePair<string, string>("Content-Type","application/json"),
+           //////     new KeyValuePair<string, string>("JsonArray", jsonList[0])
+           ////     });
 
-                            Console.WriteLine("firstname = " + firstName + " lastname = " + lastName);
-                        }
-                    }
-                }
-            }
+           ////// await client.PostAsync("api/employee/post", content);
+
+           //// var client= new HttpClient()
+           //// {
+                
+           ////  //   DefaultRequestHeaders = { ContentType=new System.Net.Mime.ContentType("application/json" ) },
+           ////     BaseAddress = new Uri("https://localhost:44301/"),
+
+           //// //    httpClient.BaseAddress = new Uri(url);
+           //// DefaultRequestHeader = {}
+           //// httpClient.DefaultRequestHeaders.Add("Content-Type", "application/json");
+
+
+
+        ////};
+
+        ////   // client.
+
+        ////    var response2 = await client.PostAsync("api/employee/post", content);
+
+        ////    //var response = client.PostAsync(new HttpRequestMessage
+        ////    //{
+        ////    //    Method = HttpMethod.Post,
+        ////    //    RequestUri = new Uri("https://localhost:44301/api/Employee/Post")
+        ////    //}).Result;
+
+        ////    var data = await response2.Content.ReadAsStringAsync();
+
+        ////    var endDate = DateTime.Now;
         }
     }
 }

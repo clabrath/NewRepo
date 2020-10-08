@@ -18,12 +18,12 @@ namespace UAT_ClassProjectWebApplication.Controllers
             return null;
         }
 
-        // GET: api/Logging/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
-        }
+        //// GET: api/Logging/5
+        //[HttpGet("{id}", Name = "Get")]
+        //public string Get(int id)
+        //{
+        //    return "value";
+        //}
 
         // POST: api/Logging
         [HttpPost]

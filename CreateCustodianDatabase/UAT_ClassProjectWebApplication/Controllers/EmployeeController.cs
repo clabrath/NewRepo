@@ -5,17 +5,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Operations;
 using UAT_ClassProjectWebApplication.Models;
 
 namespace UAT_ClassProjectWebApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+   
     public class EmployeeController : ControllerBase
     {
         private static string ConnectionString
 
-                 = "Server=tcp:uat-my-database-server.database.windows.net,1433;Database=Custodians;User ID=clabrath;Password=319@@Mayne.com;Trusted_Connection=False;Encrypt=True;MultipleActiveResultSets=True;";
+            = "Data Source=US1263469W1;Initial Catalog=EY;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+
+//            = "Data Source=US1263469W1;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+//                 = "Server=tcp:uat-my-database-server.database.windows.net,1433;Database=Custodians;User ID=clabrath;Password=319@@Mayne.com;Trusted_Connection=False;Encrypt=True;MultipleActiveResultSets=True;";
 
         // GET: api/Employee
 
@@ -32,7 +37,7 @@ namespace UAT_ClassProjectWebApplication.Controllers
                 using (SqlConnection conn = new SqlConnection(ConnectionString))
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("SELECT * FROM Custodians", conn))
+                    using (SqlCommand cmd = new SqlCommand("SELECT * FROM Employees", conn))
                     {
                         using (SqlDataReader r = cmd.ExecuteReader())
                         {
@@ -40,7 +45,12 @@ namespace UAT_ClassProjectWebApplication.Controllers
                             {
                                 var firstName = r["firstName"].ToString();
                                 var lastName = r["LastName"].ToString();
-                                employees.Add(new Employee { FirstName = firstName, LastName = lastName });
+                                var web = r["Web"].ToString();
+                                var email = r["Email"].ToString();
+                                if (web.Length>0)
+                                {
+                                    employees.Add(new Employee { FirstName = firstName, LastName = lastName, Web = web, EmailAddress = email });
+                                }
                             }
                         }
 
@@ -58,51 +68,48 @@ namespace UAT_ClassProjectWebApplication.Controllers
             return null;
         }
 
-        // GET: api/Employee/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            using (SqlConnection conn = new SqlConnection()
-            {
+        ////// GET: api/Employee/5
+        ////[HttpGet("{id}", Name = "Get")]
+        ////public string Get(int id)
+        ////{
+        ////    using (SqlConnection conn = new SqlConnection()
+        ////    {
                 
-            })
-            return "value";
-        }
+        ////    })
+        ////    return "value";
+        ////}
 
         // POST: api/Employee
-        [HttpPost]
-
+        [HttpPost("Post"),Route("Post")]
         // performance and efficientcy let make this a collection avoiding numerious calls to back end per employee
-        public void Post([FromBody] List<Employee> employees)
+        public async Task<IActionResult> Post([FromBody] List<Employee> employees)
         {
-
-            foreach(var emp in employees)
+            try
             {
+                // let add a new employee
+                //var sql = "INSERT INTO Employees (FirstName,LastName) values('{0}','{1}')";
+                //using (SqlConnection conn = new SqlConnection(ConnectionString))
+                //{
+                //    conn.Open();
+                //    foreach (var emp in employees)
+                //    {
+                //        var _sql = string.Format(sql, emp.FirstName, emp.LastName);
 
+                //        using (SqlCommand cmd = new SqlCommand(_sql, conn))
+                //        {
+                //            var result = cmd.ExecuteScalar();
+                //        }
+                //    }
+                //}
+                //return Ok(string.Format("{0} employee records successfully inserted...", employees.Count()));
+            }
+            catch(Exception excp)
+            {
+                return Ok(string.Format("error encountered inserting employee records"));
             }
 
-            // let add a new employee
-            var sql = "INSERT INTO Employee (FirstName,LastName) values()";
-            using (SqlConnection conn = new SqlConnection(ConnectionString))
-            {
-                conn.Open();
-                using (SqlCommand cmd = new SqlCommand())
-                {
+            return Ok();
 
-                }
-            }
-        }
-
-        // PUT: api/Employee/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

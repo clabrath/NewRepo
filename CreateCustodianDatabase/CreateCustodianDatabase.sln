@@ -14,9 +14,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Models", "Models", "{F64393
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_Models", "_Models\_Models.csproj", "{3FAC29DF-66BD-49F9-B977-4CA019C2CAE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAT_Class_Project_WindowsFormsApp", "UAT_Class_Project_WindowsFormsApp\UAT_Class_Project_WindowsFormsApp.csproj", "{6EAA8204-EC2B-43E4-A8CE-3D659D69190A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UAT_Class_Project_WindowsFormsApp", "UAT_Class_Project_WindowsFormsApp\UAT_Class_Project_WindowsFormsApp.csproj", "{6EAA8204-EC2B-43E4-A8CE-3D659D69190A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApp1", "WindowsFormsApp1\WindowsFormsApp1.csproj", "{591744BD-BEC5-4009-BD2E-E82FBED35310}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{261CCEB9-F23B-4262-BD69-37B006EE288A}"
+	ProjectSection(SolutionItems) = preProject
+		..\WindowsFormsApp1.zip = ..\WindowsFormsApp1.zip
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

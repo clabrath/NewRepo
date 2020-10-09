@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAT_Class_Assignment_Exceptional_Handling", "UAT_Class_Assignment_Exceptional_Handling\UAT_Class_Assignment_Exceptional_Handling.csproj", "{DF312FE6-96D1-4CDD-A5A3-39CBB1061A6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UAT_Class_Assignment_Exceptional_Handling", "UAT_Class_Assignment_Exceptional_Handling\UAT_Class_Assignment_Exceptional_Handling.csproj", "{DF312FE6-96D1-4CDD-A5A3-39CBB1061A6D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAT_Class_Project_Exception_GUI", "UAT_Class_Project_Exception_GUI\UAT_Class_Project_Exception_GUI.csproj", "{8236AA08-DF8D-426C-ABFC-2AFAF7146FF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{DF312FE6-96D1-4CDD-A5A3-39CBB1061A6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF312FE6-96D1-4CDD-A5A3-39CBB1061A6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF312FE6-96D1-4CDD-A5A3-39CBB1061A6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8236AA08-DF8D-426C-ABFC-2AFAF7146FF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8236AA08-DF8D-426C-ABFC-2AFAF7146FF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8236AA08-DF8D-426C-ABFC-2AFAF7146FF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8236AA08-DF8D-426C-ABFC-2AFAF7146FF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
